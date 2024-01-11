@@ -24,6 +24,7 @@ namespace planarviz {
         ~Scene();
         void render();
         void updateHover(Point cursor);
+        void clear();
         
         void addShader(std::string name, std::string filename);
         void addShader(std::string name, std::string vertexShaderSource, std::string fragmentShaderSource);
@@ -38,8 +39,9 @@ namespace planarviz {
         IGeometryPtr addPolygon(std::string name, std::string shaderName, std::vector<Point> vertices, float boundaryThickness = DEFAULT_POLYGON_BOUNDARY_THICKNESS);
         IGeometryPtr addPolygon(std::string name, std::string shaderName, std::string filename, float boundaryThickness = DEFAULT_POLYGON_BOUNDARY_THICKNESS);
         IGeometryPtr addCircle(std::string name, std::string shaderName, float radius, int resolution = DEFAULT_CIRCLE_RESOLUTION);
+        IGeometryPtr addSquare(std::string name, std::string shaderName, float width, float height, bool centered = false);
         IGeometryPtr addHoverableCircle(std::string name, std::string shaderName, float radius, int resolution = DEFAULT_CIRCLE_RESOLUTION, Color hoverColor = DEFAULT_HOVER_COLOR);
-        IGeometryPtr addTexturedSquare(std::string name, std::string shaderName, std::string textureName, float width, float height);
+        IGeometryPtr addTexturedSquare(std::string name, std::string shaderName, std::string textureName, float width, float height, bool centered = false);
 
         inline IGeometryPtr getObject(std::string name) { return m_pObjects[name]; }
         inline IGeometryPtr operator[](std::string name) { return this->getObject(name); }

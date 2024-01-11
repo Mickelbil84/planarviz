@@ -64,12 +64,20 @@ Circle::Circle(float radius, int resolution) : TriangleSoup(std::vector<Point>()
     createBuffer();
 }
 
-Square::Square(float width, float height) : TriangleSoup(std::vector<Point>()), m_width(width), m_height(height) {
+Square::Square(float width, float height, bool centered) : TriangleSoup(std::vector<Point>()), m_width(width), m_height(height) {
     Point v1(0.f, 0.f, 0.f, 0.f);
     Point v2(m_width, 0.f, 1.f, 0.f);
     Point v3(m_width, m_height, 1.f, 1.f);
     Point v4(0.f, m_height, 0.f, 1.f);
     m_vertices.push_back(v1); m_vertices.push_back(v2); m_vertices.push_back(v3);
     m_vertices.push_back(v1); m_vertices.push_back(v3); m_vertices.push_back(v4);
+
+    if (centered) {
+        for (auto& vertex : m_vertices) {
+            vertex.x -= .5f * m_width;
+            vertex.y -= .5f * m_height;
+        }
+    }
+
     createBuffer();
 }

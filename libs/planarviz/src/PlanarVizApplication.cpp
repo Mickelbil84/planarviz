@@ -59,6 +59,7 @@ void PlanarVizApplication::initSDL() {
     if (m_internal->m_pWindow == nullptr)
         throw std::runtime_error(format("Could not create SDL window: {}", SDL_GetError()));
     m_internal->m_glContext = SDL_GL_CreateContext(m_internal->m_pWindow.get());
+    SDL_GL_MakeCurrent(m_internal->m_pWindow.get(), m_internal->m_glContext);
     m_windowWidth = WINDOW_WIDTH; m_windowHeight = WINDOW_HEIGHT;
 
     m_prevTime = m_currTime = SDL_GetTicks();
@@ -78,8 +79,17 @@ void PlanarVizApplication::initOpenGL() {
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-    ImGui_ImplSDL2_InitForOpenGL(m_internal->m_pWindow.get(), &m_internal->m_glContext);
+    // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+    ImGuiStyle& style = ImGui::GetStyle();
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+        style.WindowRounding = 0.0f;
+        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+    }
+
+    ImGui_ImplSDL2_InitForOpenGL(m_internal->m_pWindow.get(), m_internal->m_glContext);
     ImGui_ImplOpenGL3_Init();
 }
 
@@ -153,6 +163,13 @@ void PlanarVizApplication::run() {
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        // Updaate platform windows
+        SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
+        SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
+        SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
 
         SDL_GL_SwapWindow(m_internal->m_pWindow.get());
     }

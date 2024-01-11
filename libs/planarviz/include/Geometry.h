@@ -92,7 +92,7 @@ namespace planarviz {
 
     class Square : public TriangleSoup {
         public:
-            Square(float width, float height);
+            Square(float width, float height, bool centered = false);
 
         protected:
             float m_width, m_height;

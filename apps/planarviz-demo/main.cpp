@@ -37,9 +37,9 @@ void PlanarvizDemo::init() {
 void PlanarvizDemo::update(float deltaTime) {
 
     // ImGui menu
-    ImGui::SetNextWindowPos(ImVec2(m_windowWidth - 300, 0));
-    ImGui::SetNextWindowSize(ImVec2(300, m_windowHeight));
-    ImGui::Begin("PlanarViz Demo", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+    // ImGui::SetNextWindowPos(ImVec2(m_windowWidth - 300, 0));
+    // ImGui::SetNextWindowSize(ImVec2(300, m_windowHeight));
+    ImGui::Begin("PlanarViz Demo", nullptr, 0);//ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
     ImGui::Text("Normal distribution STD:");
     ImGui::SliderFloat("float", &sigma, 0.0f, 1.0f);
     ImGui::End();

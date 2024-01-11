@@ -20,7 +20,7 @@ void main() {
     if (isHovered)
         fragColor = hoverColor;
     if (useTexture)
-        fragColor = vec4(texture(textureBuffer, uv).rgb, 1);
+        fragColor = texture(textureBuffer, uv);
 })V0G0N";
 
 	constexpr const char* default_vs = R"V0G0N(#version 330 core

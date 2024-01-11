@@ -14,7 +14,15 @@ Scene::Scene() : m_camera((float)WINDOW_WIDTH / (float)WINDOW_HEIGHT) {
 }
 
 Scene::~Scene() {
+   clear();
+   m_pShaders.clear();
+   m_pTextures.clear();
+}
+
+void Scene::clear() {
     m_pObjects.clear();
+    m_shaderObjectMapping.clear();
+    m_objectTextureMapping.clear();
 }
 
 void Scene::addShader(std::string name, std::string vertexShaderSource, std::string fragmentShaderSource) {
@@ -32,6 +40,7 @@ void Scene::addTexture(std::string name, int width, int height) {
 
 void Scene::addTexture(std::string name, std::string filename){
     int width, height, channels;
+    stbi_set_flip_vertically_on_load(true);
     unsigned char* data = stbi_load(filename.c_str(), &width, &height, &channels, STBI_rgb_alpha);
     addTexture(name, width, height);
     m_pTextures[name]->getData().clear();
@@ -59,14 +68,20 @@ IGeometryPtr Scene::addCircle(std::string name, std::string shaderName, float ra
     return addGeometry(name, shaderName, std::static_pointer_cast<IGeometry>(std::make_shared<Circle>(radius, resolution)));
 }
 
+
+IGeometryPtr Scene::addSquare(std::string name, std::string shaderName, float width, float height, bool centered)
+{
+    return addGeometry(name, shaderName, std::static_pointer_cast<IGeometry>(std::make_shared<Square>(width, height, centered)));
+}
+
 IGeometryPtr Scene::addHoverableCircle(std::string name, std::string shaderName, float radius, int resolution, Color hoverColor) {
     return addGeometry(name, shaderName, std::static_pointer_cast<IGeometry>(std::make_shared<HoverableCircle>(radius, resolution, hoverColor)));
 }
 
 
-IGeometryPtr Scene::addTexturedSquare(std::string name, std::string shaderName, std::string textureName, float width, float height)
+IGeometryPtr Scene::addTexturedSquare(std::string name, std::string shaderName, std::string textureName, float width, float height, bool centered)
 {
-    IGeometryPtr geometry = addGeometry(name, shaderName, std::static_pointer_cast<IGeometry>(std::make_shared<Square>(width, height)));
+    IGeometryPtr geometry = addGeometry(name, shaderName, std::static_pointer_cast<IGeometry>(std::make_shared<Square>(width, height, centered)));
     m_objectTextureMapping[name] = textureName;
     return geometry;
 }

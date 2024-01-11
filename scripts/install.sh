@@ -1,1 +1,5 @@
-cd build ; cmake --build . --target install
+cd build
+cmake ..
+cmake --build . --target clean
+cmake --build .
+cmake --build . --target install

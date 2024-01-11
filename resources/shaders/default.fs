@@ -17,5 +17,5 @@ void main() {
     if (isHovered)
         fragColor = hoverColor;
     if (useTexture)
-        fragColor = vec4(texture(textureBuffer, uv).rgb, 1);
+        fragColor = texture(textureBuffer, uv);
 }
