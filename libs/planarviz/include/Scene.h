@@ -10,7 +10,7 @@
 #include "Camera.h"
 #include "Texture.h"
 #include "Geometry.h"
-#include "WindowConstants.h"
+#include "Constants.h"
 
 namespace planarviz {
 

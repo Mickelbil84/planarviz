@@ -1,4 +1,4 @@
 #pragma once
 
-#include "WindowApplication.h"
+#include "PlanarVizApplication.h"
 #include "_ImGui.h"

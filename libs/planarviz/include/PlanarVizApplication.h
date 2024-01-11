@@ -5,7 +5,7 @@
 #include <stdexcept>
 
 #include "Scene.h"
-#include "WindowConstants.h"
+#include "Constants.h"
 
 
 namespace planarviz {
@@ -20,15 +20,15 @@ namespace planarviz {
         float mouseScreenX = 0.f, mouseScreenY = 0.f;
     };
 
-    class WindowLogic {
+    class VisualizationLogic {
     public:
-        virtual ~WindowLogic() = default;
+        virtual ~VisualizationLogic() = default;
 
-        virtual void init() = 0;
-        virtual void handleInput(WindowInput input) = 0;
-        virtual void update(float deltaTime) = 0;
-        virtual void render() = 0;
-        virtual void shutdown() = 0;
+        virtual void init() {};
+        virtual void handleInput(WindowInput input) {};
+        virtual void update(float deltaTime) {};
+        virtual void render() {};
+        virtual void shutdown() {};
 
         inline void updateAspectRatio(float aspectRatio) { m_scene.updateAspectRatio(aspectRatio); } 
         inline void updateWindowSize(int width, int height) { m_windowWidth = width; m_windowHeight = height; }
@@ -43,20 +43,20 @@ namespace planarviz {
         float m_dragX = 0.f, m_dragY = 0.f; // Utility for dragging camera/objects
     
     public:
-        friend class WindowApplication;
+        friend class PlanarVizApplication;
     };
-    using WindowLogicPtr = std::unique_ptr<WindowLogic>;
+    using VisualizationLogicPtr = std::unique_ptr<VisualizationLogic>;
 
 
-    class WindowApplication {
+    class PlanarVizApplication {
     public:
-        WindowApplication(WindowLogicPtr pWindowLogic);
-        ~WindowApplication();
+        PlanarVizApplication(VisualizationLogicPtr pWindowLogic);
+        ~PlanarVizApplication();
 
         void run();
 
     private:
-        WindowLogicPtr m_pWindowLogic;
+        VisualizationLogicPtr m_pWindowLogic;
         
         struct _Internal;
         std::unique_ptr<_Internal> m_internal;

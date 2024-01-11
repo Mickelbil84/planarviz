@@ -1,24 +1,18 @@
 #include <planarviz.h>
 using namespace planarviz;
 
-class PlanarvizDemo : public WindowLogic {
+class PlanarvizDemo : public VisualizationLogic {
 public:
     virtual void init();
-    virtual void handleInput(WindowInput input) {}
     virtual void update(float deltaTime);
-    virtual void render() {}
-    virtual void shutdown() {}
 
 protected:
-    float dragX, dragY;
-    float m_elapsedTime = 0.f;
-
     std::vector<float> probs;
     float sigma = 0.1f;
 };
 
 int main() {
-    WindowApplication app(std::make_unique<PlanarvizDemo>());
+    PlanarVizApplication app(std::make_unique<PlanarvizDemo>());
     app.run();
     return 0;
 }

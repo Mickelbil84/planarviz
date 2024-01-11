@@ -1,4 +1,4 @@
-#include "WindowApplication.h"
+#include "PlanarVizApplication.h"
 using namespace planarviz;
 
 #include <fmt/core.h>
@@ -16,15 +16,15 @@ using SDL_WindowPtr = std::shared_ptr<SDL_Window>;
 #include "planarviz_bundled_shaders.h"
 
 
-struct WindowApplication::_Internal {
+struct PlanarVizApplication::_Internal {
     _Internal() {}
     SDL_WindowPtr m_pWindow;
     SDL_GLContext m_glContext;
 };
 
-WindowApplication::WindowApplication(WindowLogicPtr pWindowLogic) : 
+PlanarVizApplication::PlanarVizApplication(VisualizationLogicPtr pWindowLogic) : 
     m_pWindowLogic(std::move(pWindowLogic)), m_bShouldRun(false), 
-    m_internal(std::make_unique<WindowApplication::_Internal>()) {
+    m_internal(std::make_unique<PlanarVizApplication::_Internal>()) {
     if (m_pWindowLogic == nullptr)
         throw std::runtime_error("Cannot start WindowApplication without internal logic.");
     initSDL();
@@ -32,7 +32,7 @@ WindowApplication::WindowApplication(WindowLogicPtr pWindowLogic) :
     m_bShouldRun = true;
 }
 
-WindowApplication::~WindowApplication() {
+PlanarVizApplication::~PlanarVizApplication() {
     _shutdown();
     m_pWindowLogic->shutdown();
     
@@ -45,7 +45,7 @@ WindowApplication::~WindowApplication() {
     SDL_Quit();
 }
 
-void WindowApplication::initSDL() {
+void PlanarVizApplication::initSDL() {
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
         throw std::runtime_error(format("Could not initialize SDL: {}", SDL_GetError()));
 
@@ -63,7 +63,7 @@ void WindowApplication::initSDL() {
 
     m_prevTime = m_currTime = SDL_GetTicks();
 }
-void WindowApplication::initOpenGL() {
+void PlanarVizApplication::initOpenGL() {
     if (glewInit() != GLEW_OK)
         throw std::runtime_error(format("Could not init GLEW: {}", (char *)glewGetErrorString(glewInit())));
     
@@ -83,7 +83,7 @@ void WindowApplication::initOpenGL() {
     ImGui_ImplOpenGL3_Init();
 }
 
-void WindowApplication::run() {
+void PlanarVizApplication::run() {
     _init();
     m_pWindowLogic->updateWindowSize(m_windowWidth, m_windowHeight);
     m_pWindowLogic->init();
@@ -158,10 +158,10 @@ void WindowApplication::run() {
     }
 }
 
-void WindowApplication::_init() {
+void PlanarVizApplication::_init() {
     m_pWindowLogic->m_scene.addShader("default", std::string(DEFAULT_VERTEX_SHADER), std::string(DEFAULT_FRAGMENT_SHADER));
 }
-void WindowApplication::_handleInput(WindowInput input) {
+void PlanarVizApplication::_handleInput(WindowInput input) {
     // Get cursor from screen space to world coordinates
     Point cursor(input.mouseScreenX, input.mouseScreenY);
     cursor.y /= m_pWindowLogic->m_scene.getCamera().getAspectRatio();
@@ -202,12 +202,12 @@ void WindowApplication::_handleInput(WindowInput input) {
         if (!m_pWindowLogic->m_bCursorOverride) 
         m_pWindowLogic->m_scene.getCamera().addZoom(input.mouseScroll * m_pWindowLogic->m_scene.getCamera().zoomSpeed);
 }
-void WindowApplication::_update(float deltaTime) {
+void PlanarVizApplication::_update(float deltaTime) {
     m_pWindowLogic->m_elapsedTime += deltaTime;
 }
-void WindowApplication::_render() {
+void PlanarVizApplication::_render() {
     m_pWindowLogic->m_scene.render();
 }
-void WindowApplication::_shutdown() {
+void PlanarVizApplication::_shutdown() {
     
 }

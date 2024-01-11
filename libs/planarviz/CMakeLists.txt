@@ -30,8 +30,8 @@ set(public_headers
     include/Shader.h
     include/Texture.h
     include/Utils.h
-    include/WindowApplication.h
-    include/WindowConstants.h
+    include/PlanarVizApplication.h
+    include/Constants.h
 )
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${public_headers}")
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "d")
@@ -43,7 +43,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     src/Shader.cpp
     src/Texture.cpp
     src/Geometry.cpp
-    src/WindowApplication.cpp
+    src/PlanarVizApplication.cpp
 
     ${CMAKE_SOURCE_DIR}/third-party/imgui/imgui.cpp
     ${CMAKE_SOURCE_DIR}/third-party/imgui/imgui_demo.cpp
