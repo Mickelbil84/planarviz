@@ -1,5 +1,9 @@
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 #include <planarviz.h>
 using namespace planarviz;
+
 
 class PlanarvizDemo : public VisualizationLogic {
 public:

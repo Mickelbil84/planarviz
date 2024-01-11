@@ -3,6 +3,9 @@ using namespace planarviz;
 
 #include <gl/glew.h>
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 
 TriangleSoup::TriangleSoup(std::vector<Point> vertices) {
     if (vertices.size() > 0) {
