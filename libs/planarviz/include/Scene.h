@@ -26,6 +26,8 @@ namespace planarviz {
         void updateHover(Point cursor);
         
         void addShader(std::string name, std::string filename);
+        void addShader(std::string name, std::string vertexShaderSource, std::string fragmentShaderSource);
+        
         void addTexture(std::string name, int width, int height);
         void addTexture(std::string name, std::string filename);
 

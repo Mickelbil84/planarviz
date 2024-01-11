@@ -17,6 +17,10 @@ Scene::~Scene() {
     m_pObjects.clear();
 }
 
+void Scene::addShader(std::string name, std::string vertexShaderSource, std::string fragmentShaderSource) {
+    m_pShaders[name] = std::make_shared<Shader>(vertexShaderSource, fragmentShaderSource);
+    m_shaderObjectMapping[name] = std::vector<std::string>();
+}
 void Scene::addShader(std::string name, std::string filename) {
     m_pShaders[name] = std::make_shared<Shader>(filename);
     m_shaderObjectMapping[name] = std::vector<std::string>();

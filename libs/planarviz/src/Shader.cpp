@@ -6,11 +6,10 @@ using namespace planarviz;
 #include <fmt/core.h>
 using fmt::print, fmt::format;
 
-Shader::Shader(std::string filename) {
+Shader::Shader(std::string vsSource, std::string fsSource) {
     GLint success = 0;
     char buffer[2048];
 
-    std::string vsSource = getFileContent(filename + ".vs");
     const GLchar* vsSource_cstr = vsSource.c_str();
     GLuint vs = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vs, 1, &vsSource_cstr, nullptr);
@@ -22,7 +21,6 @@ Shader::Shader(std::string filename) {
         throw std::runtime_error(format("Could not compile vertex shader:\n\n{}\n", buffer));
     }
 
-    std::string fsSource = getFileContent(filename + ".fs");
     const GLchar* fsSource_cstr = fsSource.c_str();
     GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fs, 1, &fsSource_cstr, nullptr);
@@ -47,6 +45,8 @@ Shader::Shader(std::string filename) {
     glDetachShader(m_program, fs);
     glDeleteShader(vs);
     glDeleteShader(fs);
+}
+Shader::Shader(std::string filename) : Shader(getFileContent(filename + ".vs"), getFileContent(filename + ".fs")) {
 }
 
 Shader::~Shader() {

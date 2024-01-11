@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.11)
-
 project(planarviz VERSION 0.1)
 set(namespace planarviz)
 
@@ -11,6 +9,14 @@ find_package(CGAL REQUIRED)
 include_directories(${CMAKE_SOURCE_DIR}/third-party/stb)
 include_directories(${CMAKE_SOURCE_DIR}/third-party/imgui)
 include_directories(${CMAKE_SOURCE_DIR}/third-party/json/include)
+
+#////////////////////////////////////////////////////
+#/ Setup shaders
+
+include(SetupShaders)
+setup_shaders("${PROJECT_SOURCE_DIR}/include/planarviz_bundled_shaders.h")
+
+#////////////////////////////////////////////////////
 
 add_library(${PROJECT_NAME}  SHARED)
 

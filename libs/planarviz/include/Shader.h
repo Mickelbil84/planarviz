@@ -12,6 +12,7 @@ namespace planarviz {
     public:
         // Pass shader path without extensions, and there are assumed to be *.vs and *.fs with the given prefix.
         Shader(std::string filename);
+        Shader(std::string vertexShaderSource, std::string fragmentShaderSource);
         ~Shader();
 
         void use();
