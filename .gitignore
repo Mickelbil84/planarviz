@@ -34,4 +34,5 @@
 build/
 lib/
 bin/
+.vscode/
 .DS_Store
