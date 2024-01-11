@@ -181,16 +181,18 @@ void PlanarVizApplication::_handleInput(WindowInput input) {
                 m_pWindowLogic->m_dragY = m_pWindowLogic->m_scene.getCamera().getY();
             }
         }
-        float panSpeed = m_pWindowLogic->m_scene.getCamera().panSpeed;
-        if (!m_pWindowLogic->m_bCursorOverride) {
-            if (m_pWindowLogic->m_scene.getHoveredGeometry())
-                m_pWindowLogic->m_scene.getHoveredGeometry()->getTransform().setPosition(
-                    cursor.x + m_pWindowLogic->m_dragX, 
-                    cursor.y + m_pWindowLogic->m_dragY);
-            else
-                m_pWindowLogic->m_scene.getCamera().setPosition(
-                    m_pWindowLogic->m_dragX + panSpeed * input.dragDX, 
-                    m_pWindowLogic->m_dragY + panSpeed * input.dragDY);
+        else {
+            float panSpeed = m_pWindowLogic->m_scene.getCamera().panSpeed;
+            if (!m_pWindowLogic->m_bCursorOverride) {
+                if (m_pWindowLogic->m_scene.getHoveredGeometry())
+                    m_pWindowLogic->m_scene.getHoveredGeometry()->getTransform().setPosition(
+                        cursor.x + m_pWindowLogic->m_dragX, 
+                        cursor.y + m_pWindowLogic->m_dragY);
+                else
+                    m_pWindowLogic->m_scene.getCamera().setPosition(
+                        m_pWindowLogic->m_dragX + panSpeed * input.dragDX, 
+                        m_pWindowLogic->m_dragY + panSpeed * input.dragDY);
+            }
         }
     }
     else {
