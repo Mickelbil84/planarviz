@@ -35,9 +35,15 @@ namespace planarviz {
 
         // Set to true if logic should ignore cursor hover and drag
         bool m_bCursorOverride = false;
+
     protected:
         Scene m_scene;
+        float m_elapsedTime = 0.f;
         int m_windowWidth, m_windowHeight;
+        float m_dragX = 0.f, m_dragY = 0.f; // Utility for dragging camera/objects
+    
+    public:
+        friend class WindowApplication;
     };
     using WindowLogicPtr = std::unique_ptr<WindowLogic>;
 
@@ -64,6 +70,13 @@ namespace planarviz {
         // Helper methods
         void initSDL();
         void initOpenGL();
+        
+        // Planarviz basic logic
+        void _init();
+        void _handleInput(WindowInput input);
+        void _update(float deltaTime);
+        void _render();
+        void _shutdown();
     };
 
 }

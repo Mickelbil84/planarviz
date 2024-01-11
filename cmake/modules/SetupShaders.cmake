@@ -15,7 +15,7 @@ file(APPEND ${SHADERS_INCLUDE} "#pragma once\n")
 file(APPEND ${SHADERS_INCLUDE} "namespace ${namespace} {\n")
 foreach(SHADER_FILE ${SHADER_FILES})
     file(READ ${SHADER_FILE} SHADER_CONTENT)
-    string(REPLACE "\n" "\\\n\t\t" SHADER_CONTENT ${SHADER_CONTENT})
+    # string(REPLACE "\n" "\n\t\t" SHADER_CONTENT ${SHADER_CONTENT})
 
     get_filename_component(SHADER_FILE_NAME ${SHADER_FILE} NAME)
     string(REPLACE "." "_" SHADER_FILE_NAME ${SHADER_FILE_NAME})
@@ -27,7 +27,7 @@ foreach(SHADER_FILE ${SHADER_FILES})
         set(DEFAULT_FRAGMENT_SHADER_EXISTS TRUE)
     endif()
 
-    file(APPEND ${SHADERS_INCLUDE} "\tconstexpr char* ${SHADER_FILE_NAME} = \"${SHADER_CONTENT}\";\n\n")
+    file(APPEND ${SHADERS_INCLUDE} "\tconstexpr const char* ${SHADER_FILE_NAME} = R\"V0G0N(${SHADER_CONTENT})V0G0N\";\n\n")
 endforeach()
 
 if (NOT ${DEFAULT_VERTEX_SHADER_EXISTS} OR NOT ${DEFAULT_FRAGMENT_SHADER_EXISTS})

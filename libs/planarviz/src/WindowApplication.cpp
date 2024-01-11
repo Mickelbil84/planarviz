@@ -13,6 +13,8 @@ using namespace planarviz;
 using fmt::print, fmt::format;
 using SDL_WindowPtr = std::shared_ptr<SDL_Window>;
 
+#include "planarviz_bundled_shaders.h"
+
 
 struct WindowApplication::_Internal {
     _Internal() {}
@@ -23,13 +25,16 @@ struct WindowApplication::_Internal {
 WindowApplication::WindowApplication(WindowLogicPtr pWindowLogic) : 
     m_pWindowLogic(std::move(pWindowLogic)), m_bShouldRun(false), 
     m_internal(std::make_unique<WindowApplication::_Internal>()) {
+    if (m_pWindowLogic == nullptr)
+        throw std::runtime_error("Cannot start WindowApplication without internal logic.");
     initSDL();
     initOpenGL();
     m_bShouldRun = true;
 }
 
 WindowApplication::~WindowApplication() {
-    if (m_pWindowLogic) m_pWindowLogic->shutdown();
+    _shutdown();
+    m_pWindowLogic->shutdown();
     
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL2_Shutdown();
@@ -65,7 +70,6 @@ void WindowApplication::initOpenGL() {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glLineWidth(10.f);
 
     // Setup Dear ImGui
     IMGUI_CHECKVERSION();
@@ -80,10 +84,9 @@ void WindowApplication::initOpenGL() {
 }
 
 void WindowApplication::run() {
-    if (m_pWindowLogic != nullptr) {
-        m_pWindowLogic->updateWindowSize(m_windowWidth, m_windowHeight);
-        m_pWindowLogic->init();
-    }
+    _init();
+    m_pWindowLogic->updateWindowSize(m_windowWidth, m_windowHeight);
+    m_pWindowLogic->init();
 
     while (m_bShouldRun) {
         SDL_Event e;
@@ -94,10 +97,8 @@ void WindowApplication::run() {
             if (e.type == SDL_WINDOWEVENT && e.window.event == SDL_WINDOWEVENT_RESIZED) {
                 m_windowWidth = e.window.data1;
                 m_windowHeight = e.window.data2; 
-                if (m_pWindowLogic) {
-                    m_pWindowLogic->updateAspectRatio((float)m_windowWidth / (float)m_windowHeight);
-                    m_pWindowLogic->updateWindowSize(m_windowWidth, m_windowHeight);
-                }
+                m_pWindowLogic->updateAspectRatio((float)m_windowWidth / (float)m_windowHeight);
+                m_pWindowLogic->updateWindowSize(m_windowWidth, m_windowHeight);
             }
             if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT && !m_input.bIsDrag) {
                 m_input.bIsDrag = true;
@@ -129,18 +130,20 @@ void WindowApplication::run() {
         ImGui::NewFrame();
         // ImGui::ShowDemoWindow();
 
-        if (m_pWindowLogic)
-            m_pWindowLogic->m_bCursorOverride = ImGui::GetIO().WantCaptureMouse;
+        m_pWindowLogic->m_bCursorOverride = ImGui::GetIO().WantCaptureMouse;
 
         glViewport(0, 0, m_windowWidth, m_windowHeight);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(1.f, 1.f, 1.f, 1.f);
 
-        if (m_pWindowLogic != nullptr) {
-            m_pWindowLogic->handleInput(m_input);
-            m_pWindowLogic->update(deltaTime);
-            m_pWindowLogic->render();
-        }
+        _handleInput(m_input);
+        m_pWindowLogic->handleInput(m_input);
+
+        _update(deltaTime);
+        m_pWindowLogic->update(deltaTime);
+
+        _render();
+        m_pWindowLogic->render();
 
         if (m_input.bIsDrag) {
             m_input.dragDX = (float)(m_input.mouseX - m_input.dragX0) / (float)m_windowWidth;
@@ -153,4 +156,58 @@ void WindowApplication::run() {
 
         SDL_GL_SwapWindow(m_internal->m_pWindow.get());
     }
+}
+
+void WindowApplication::_init() {
+    m_pWindowLogic->m_scene.addShader("default", std::string(DEFAULT_VERTEX_SHADER), std::string(DEFAULT_FRAGMENT_SHADER));
+}
+void WindowApplication::_handleInput(WindowInput input) {
+    // Get cursor from screen space to world coordinates
+    Point cursor(input.mouseScreenX, input.mouseScreenY);
+    cursor.y /= m_pWindowLogic->m_scene.getCamera().getAspectRatio();
+    cursor.x -= m_pWindowLogic->m_scene.getCamera().getX(); cursor.y -= m_pWindowLogic->m_scene.getCamera().getY(); 
+    cursor.x /= m_pWindowLogic->m_scene.getCamera().getZoom(); cursor.y /= m_pWindowLogic->m_scene.getCamera().getZoom();
+
+    // Setup object dragging, camera panning and zoom
+    if (input.bIsDrag) {
+        if (input.bIsDragBegin) {
+            if (m_pWindowLogic->m_scene.getHoveredGeometry()) {
+                m_pWindowLogic->m_dragX = m_pWindowLogic->m_scene.getHoveredGeometry()->getTransform().x - cursor.x;
+                m_pWindowLogic->m_dragY = m_pWindowLogic->m_scene.getHoveredGeometry()->getTransform().y - cursor.y;
+                m_pWindowLogic->m_scene.getHovered()->setDragged(true);
+            }
+            else {
+                m_pWindowLogic->m_dragX = m_pWindowLogic->m_scene.getCamera().getX();
+                m_pWindowLogic->m_dragY = m_pWindowLogic->m_scene.getCamera().getY();
+            }
+        }
+        float panSpeed = m_pWindowLogic->m_scene.getCamera().panSpeed;
+        if (!m_pWindowLogic->m_bCursorOverride) {
+            if (m_pWindowLogic->m_scene.getHoveredGeometry())
+                m_pWindowLogic->m_scene.getHoveredGeometry()->getTransform().setPosition(
+                    cursor.x + m_pWindowLogic->m_dragX, 
+                    cursor.y + m_pWindowLogic->m_dragY);
+            else
+                m_pWindowLogic->m_scene.getCamera().setPosition(
+                    m_pWindowLogic->m_dragX + panSpeed * input.dragDX, 
+                    m_pWindowLogic->m_dragY + panSpeed * input.dragDY);
+        }
+    }
+    else {
+        if (m_pWindowLogic->m_scene.getHovered()) m_pWindowLogic->m_scene.getHovered()->setDragged(false);
+        if (!m_pWindowLogic->m_bCursorOverride) m_pWindowLogic->m_scene.updateHover(cursor);
+    }
+
+    if (input.mouseScroll != 0) 
+        if (!m_pWindowLogic->m_bCursorOverride) 
+        m_pWindowLogic->m_scene.getCamera().addZoom(input.mouseScroll * m_pWindowLogic->m_scene.getCamera().zoomSpeed);
+}
+void WindowApplication::_update(float deltaTime) {
+    m_pWindowLogic->m_elapsedTime += deltaTime;
+}
+void WindowApplication::_render() {
+    m_pWindowLogic->m_scene.render();
+}
+void WindowApplication::_shutdown() {
+    
 }

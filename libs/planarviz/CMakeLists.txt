@@ -1,4 +1,4 @@
-project(planarviz VERSION 0.1)
+project(planarviz VERSION 0.2)
 set(namespace planarviz)
 
 find_package(fmt REQUIRED)
@@ -37,7 +37,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${public_headers
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "d")
 
 target_sources(${PROJECT_NAME} PRIVATE
-    src/LocalizationDemo.cpp
     src/Utils.cpp
     src/Scene.cpp
     src/Camera.cpp

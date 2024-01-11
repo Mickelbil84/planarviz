@@ -18,6 +18,7 @@ Shader::Shader(std::string vsSource, std::string fsSource) {
     if (success == GL_FALSE) {
         glGetShaderInfoLog(vs, 2048, nullptr, buffer);
         glDeleteShader(vs);
+        print("{}\n!!!!!!!!!!!!!!!!\n", vsSource_cstr);
         throw std::runtime_error(format("Could not compile vertex shader:\n\n{}\n", buffer));
     }
 
