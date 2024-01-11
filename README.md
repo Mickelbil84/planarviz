@@ -23,7 +23,7 @@ sudo ./scripts/install.sh
 Then, in your own project, simply add a `CMakeLists.txt` file with the following:
 
 ```CMake
-cmake_minimum_version(3.20)
+cmake_minimum_required(VERSION 3.20)
 project(myproject)
 
 find_package(planarviz REQUIRED)

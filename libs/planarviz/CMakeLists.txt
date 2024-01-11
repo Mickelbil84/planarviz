@@ -6,6 +6,11 @@ find_package(GLEW REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(CGAL REQUIRED)
 
+if(MSVC)
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+    set(BUILD_SHARED_LIBS TRUE)
+endif()
+
 include_directories(${CMAKE_SOURCE_DIR}/third-party/stb)
 include_directories(${CMAKE_SOURCE_DIR}/third-party/imgui)
 include_directories(${CMAKE_SOURCE_DIR}/third-party/json/include)
