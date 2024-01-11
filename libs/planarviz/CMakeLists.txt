@@ -12,7 +12,7 @@ include_directories(${CMAKE_SOURCE_DIR}/third-party/stb)
 include_directories(${CMAKE_SOURCE_DIR}/third-party/imgui)
 include_directories(${CMAKE_SOURCE_DIR}/third-party/json/include)
 
-add_library(${PROJECT_NAME}  STATIC)
+add_library(${PROJECT_NAME}  SHARED)
 
 set(public_headers 
     include/planarviz.h
