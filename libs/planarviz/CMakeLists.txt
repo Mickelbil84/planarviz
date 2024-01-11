@@ -15,6 +15,8 @@ include_directories(${CMAKE_SOURCE_DIR}/third-party/json/include)
 add_library(${PROJECT_NAME}  STATIC)
 
 set(public_headers 
+    include/planarviz.h
+    include/_ImGui.h
     include/Camera.h
     include/Color.h
     include/Geometry.h

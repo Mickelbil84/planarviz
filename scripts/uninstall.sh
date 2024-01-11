@@ -1,0 +1,1 @@
+cd build; xargs rm < install_manifest.txt
