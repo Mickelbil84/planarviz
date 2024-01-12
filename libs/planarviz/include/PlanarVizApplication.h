@@ -50,7 +50,7 @@ namespace planarviz {
 
     class PlanarVizApplication {
     public:
-        PlanarVizApplication(VisualizationLogicPtr pWindowLogic);
+        PlanarVizApplication(VisualizationLogicPtr pWindowLogic, bool bWithViewports = false);
         ~PlanarVizApplication();
 
         void run();
@@ -60,6 +60,7 @@ namespace planarviz {
         
         struct _Internal;
         std::unique_ptr<_Internal> m_internal;
+        bool m_bWithViewports;
 
         unsigned int m_prevTime, m_currTime;
 

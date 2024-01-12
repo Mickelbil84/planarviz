@@ -22,9 +22,10 @@ struct PlanarVizApplication::_Internal {
     SDL_GLContext m_glContext;
 };
 
-PlanarVizApplication::PlanarVizApplication(VisualizationLogicPtr pWindowLogic) : 
+PlanarVizApplication::PlanarVizApplication(VisualizationLogicPtr pWindowLogic, bool bWithViewports) : 
     m_pWindowLogic(std::move(pWindowLogic)), m_bShouldRun(false), 
-    m_internal(std::make_unique<PlanarVizApplication::_Internal>()) {
+    m_internal(std::make_unique<PlanarVizApplication::_Internal>()),
+    m_bWithViewports(bWithViewports) {
     if (m_pWindowLogic == nullptr)
         throw std::runtime_error("Cannot start WindowApplication without internal logic.");
     initSDL();
@@ -79,7 +80,8 @@ void PlanarVizApplication::initOpenGL() {
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+    if (m_bWithViewports)
+        io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
     // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
     ImGuiStyle& style = ImGui::GetStyle();
@@ -164,12 +166,14 @@ void PlanarVizApplication::run() {
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        // Updaate platform windows
-        SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
-        SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
-        ImGui::UpdatePlatformWindows();
-        ImGui::RenderPlatformWindowsDefault();
-        SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+        if (m_bWithViewports) {
+            // Update platform windows
+            SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
+            SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
+            SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+        }
 
         SDL_GL_SwapWindow(m_internal->m_pWindow.get());
     }

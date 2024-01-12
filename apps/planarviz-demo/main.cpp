@@ -16,7 +16,7 @@ protected:
 };
 
 int main() {
-    PlanarVizApplication app(std::make_unique<PlanarvizDemo>());
+    PlanarVizApplication app(std::make_unique<PlanarvizDemo>(), true);
     app.run();
     return 0;
 }
