@@ -14,12 +14,13 @@ namespace planarviz {
 
     struct SE2 {
         float x, y, theta;
-        float depth = 0.f;
+        float depth = 0.f, scale = 1.f;
         SE2(float x = 0.f, float y = 0.f, float theta = 0.f) : x(x), y(y), theta(theta) {}
 
         inline void setTranform(float x, float y, float theta) { this->x = x; this->y = y; this->theta = theta; }
         inline void setPosition(float x, float y) { this->x = x; this->y = y;}
         inline void setRotation(float theta) { this->theta = theta; }
+        inline void setScale(float scale) { this->scale = scale; } // When possible, it is preffered to not use scaling
         inline void setDepth(float depth) { this->depth = depth; }
     };
 
@@ -64,38 +65,47 @@ namespace planarviz {
 
     class TriangleSoup : public IGeometry {
     public:
-        public:
-            TriangleSoup(std::vector<Point> vertices);
-            virtual ~TriangleSoup();
-            virtual void render();
+        TriangleSoup(std::vector<Point> vertices);
+        virtual ~TriangleSoup();
+        virtual void render();
         
-        protected: 
-            std::vector<Point> m_vertices;
-            unsigned int m_vao;
+    protected: 
+        std::vector<Point> m_vertices;
+        unsigned int m_vao;
+        bool m_bLines = false; // draw a line strip instead of triangles
 
-            void createBuffer();
+        void createBuffer();
+    };
+    class LineStrip : public TriangleSoup {
+    public:
+        LineStrip(std::vector<Point> vertices) : TriangleSoup(vertices) {m_bLines = true;}
+    };
+
+    class Arrow : public LineStrip {
+    public:
+        Arrow(float length, float headLength, float headWidth);
     };
 
     class Polygon : public TriangleSoup {
-        public:
-            Polygon(std::vector<Point> vertices, float boundaryThickness);
+    public:
+        Polygon(std::vector<Point> vertices, float boundaryThickness);
     };
 
     class Circle : public TriangleSoup {
-        public:
-            Circle(float radius, int resolution);
-        
-        protected:
-            float m_radius;
-            int m_resolution;
+    public:
+        Circle(float radius, int resolution);
+    
+    protected:
+        float m_radius;
+        int m_resolution;
     };
 
     class Square : public TriangleSoup {
-        public:
-            Square(float width, float height, bool centered = false);
+    public:
+        Square(float width, float height, bool centered = false);
 
-        protected:
-            float m_width, m_height;
+    protected:
+        float m_width, m_height;
     };
 
     class HoverableCircle : public Circle, public IHoverable {

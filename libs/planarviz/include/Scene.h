@@ -16,6 +16,9 @@ namespace planarviz {
 
     constexpr float DEFAULT_POLYGON_BOUNDARY_THICKNESS = 0.004f;
     constexpr int DEFAULT_CIRCLE_RESOLUTION = 32;
+    constexpr float DEFAULT_ARROW_LENGTH = 1.f;
+    constexpr float DEFAULT_ARROW_HEAD_LENGTH = .2f;
+    constexpr float DEFAULT_ARROW_HEAD_WIDTH = .1f;
     const Color DEFAULT_HOVER_COLOR(34.f/255.f, 235.f/255.f, 54.f/255.f, 0.8f);
 
     class Scene {
@@ -35,7 +38,8 @@ namespace planarviz {
         inline ShaderPtr getShader(std::string name) { return m_pShaders[name]; }
         inline TexturePtr getTexture(std::string name) { return m_pTextures[name]; }
 
-    
+        IGeometryPtr addLineStrip(std::string name, std::string shaderName, std::vector<Point> vertices);
+        IGeometryPtr addArrow(std::string name, std::string shaderName, float length=DEFAULT_ARROW_LENGTH, float headLength=DEFAULT_ARROW_HEAD_LENGTH, float headWidth=DEFAULT_ARROW_HEAD_WIDTH);
         IGeometryPtr addPolygon(std::string name, std::string shaderName, std::vector<Point> vertices, float boundaryThickness = DEFAULT_POLYGON_BOUNDARY_THICKNESS);
         IGeometryPtr addPolygon(std::string name, std::string shaderName, std::string filename, float boundaryThickness = DEFAULT_POLYGON_BOUNDARY_THICKNESS);
         IGeometryPtr addCircle(std::string name, std::string shaderName, float radius, int resolution = DEFAULT_CIRCLE_RESOLUTION);

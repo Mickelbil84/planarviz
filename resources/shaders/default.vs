@@ -10,6 +10,7 @@ struct Camera {
 
 uniform vec2 position;
 uniform float rotation;
+uniform float scale;
 uniform float depth;
 uniform Camera camera;
 
@@ -18,7 +19,8 @@ out vec2 uv;
 void main() {
     uv = vec2(uvCoord.xy);
     float ct = cos(rotation), st = sin(rotation);
-    vec2 finalPos = (vec2(pos.x * ct - pos.y * st, pos.x * st + pos.y * ct) + position) * camera.zoom + camera.position;
+    vec2 finalPos = pos * scale;
+    finalPos = (vec2(finalPos.x * ct - finalPos.y * st, finalPos.x * st + finalPos.y * ct) + position) * camera.zoom + camera.position;
     finalPos.y *= camera.aspectRatio;
     gl_Position = vec4(finalPos, depth, 1.0);
 }

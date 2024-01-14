@@ -56,6 +56,14 @@ IGeometryPtr Scene::addGeometry(std::string name, std::string shaderName, IGeome
     return m_pObjects[name];
 }
 
+IGeometryPtr Scene::addLineStrip(std::string name, std::string shaderName, std::vector<Point> vertices) {
+    return addGeometry(name, shaderName, std::static_pointer_cast<IGeometry>(std::make_shared<LineStrip>(vertices)));
+}
+
+IGeometryPtr Scene::addArrow(std::string name, std::string shaderName, float length, float headLength, float headWidth) {
+    return addGeometry(name, shaderName, std::static_pointer_cast<IGeometry>(std::make_shared<Arrow>(length, headLength, headWidth)));
+}
+
 IGeometryPtr Scene::addPolygon(std::string name, std::string shaderName, std::vector<Point> vertices, float boundaryThickness) {
     return addGeometry(name, shaderName, std::static_pointer_cast<IGeometry>(std::make_shared<Polygon>(vertices, boundaryThickness)));
 }
@@ -134,6 +142,7 @@ void Scene::updateHover(Point cursor) {
 void Scene::applyObjectTransform(ShaderPtr pShader, SE2 transform) {
     pShader->uniform("position", transform.x, transform.y);
     pShader->uniform("rotation", transform.theta);
+    pShader->uniform("scale", transform.scale);
     pShader->uniform("depth", transform.depth);
 }
 

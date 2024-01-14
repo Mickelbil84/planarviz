@@ -18,7 +18,7 @@ TriangleSoup::~TriangleSoup() {
 }
 void TriangleSoup::render() {
     glBindVertexArray(m_vao);
-    glDrawArrays(GL_TRIANGLES, 0, m_vertices.size());
+    glDrawArrays(m_bLines ? GL_LINE_STRIP : GL_TRIANGLES, 0, m_vertices.size());
     glBindVertexArray(0);
 }
 void TriangleSoup::createBuffer() {
@@ -37,6 +37,16 @@ void TriangleSoup::createBuffer() {
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+}
+
+Arrow::Arrow(float length, float headLength, float headWidth) :
+    LineStrip(std::vector<Point>()) {
+    m_vertices.push_back(Point(0.f, 0.f));
+    m_vertices.push_back(Point(length, 0.f));
+    m_vertices.push_back(Point(length - headLength, headWidth));
+    m_vertices.push_back(Point(length, 0.f));
+    m_vertices.push_back(Point(length - headLength, -headWidth));
+    createBuffer();
 }
 
 Polygon::Polygon(std::vector<Point> vertices, float boundaryThickness) :
