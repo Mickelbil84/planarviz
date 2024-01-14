@@ -91,6 +91,11 @@ namespace planarviz {
         Polygon(std::vector<Point> vertices, float boundaryThickness);
     };
 
+    class PolygonFill : public TriangleSoup {
+    public:
+        PolygonFill(std::vector<Point> vertices);
+    };
+
     class Circle : public TriangleSoup {
     public:
         Circle(float radius, int resolution);

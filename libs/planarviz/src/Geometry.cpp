@@ -5,6 +5,23 @@ using namespace planarviz;
 
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <unordered_map>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/mark_domain_in_triangulation.h>
+#include <CGAL/Polygon_2.h>
+
+#include <boost/property_map/property_map.hpp>
+typedef CGAL::Exact_predicates_inexact_constructions_kernel       K;
+typedef CGAL::Triangulation_vertex_base_2<K>                      Vb;
+typedef CGAL::Constrained_triangulation_face_base_2<K>            Fb;
+typedef CGAL::Triangulation_data_structure_2<Vb,Fb>               TDS;
+typedef CGAL::Exact_predicates_tag                                Itag;
+typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag>  CDT;
+typedef CDT::Face_handle                                          Face_handle;
+typedef CDT::Point                                                Point_2;
+typedef CGAL::Polygon_2<K>                                        Polygon_2;
 
 
 TriangleSoup::TriangleSoup(std::vector<Point> vertices) {
@@ -63,6 +80,28 @@ Polygon::Polygon(std::vector<Point> vertices, float boundaryThickness) :
         Point b_plus(b.x + n.x, b.y + n.y); Point b_minus(b.x - n.x, b.y - n.y);
         m_vertices.push_back(a_minus); m_vertices.push_back(b_plus); m_vertices.push_back(b_minus);
         m_vertices.push_back(a_minus); m_vertices.push_back(b_plus); m_vertices.push_back(a_plus);
+    }
+    createBuffer();
+}
+
+PolygonFill::PolygonFill(std::vector<Point> vertices) : TriangleSoup(std::vector<Point>()) {
+    Polygon_2 polygon;
+    for (int idx = 0; idx < vertices.size() - 1; idx++)
+        polygon.push_back(Point_2(vertices[idx].x, vertices[idx].y));
+    
+    CDT cdt;
+    cdt.insert_constraint(polygon.vertices_begin(), polygon.vertices_end(), true);
+
+    std::unordered_map<Face_handle, bool> in_domain_map;
+    boost::associative_property_map<std::unordered_map<Face_handle, bool>> in_domain(in_domain_map);
+    CGAL::mark_domain_in_triangulation(cdt, in_domain);
+
+    for (Face_handle f : cdt.finite_face_handles()) {
+        if (!get(in_domain, f)) continue;
+        for (int i = 0; i < 3; i++) {
+            auto v = f->vertex(i);
+            m_vertices.push_back(Point(v->point().x(), v->point().y()));
+        }
     }
     createBuffer();
 }

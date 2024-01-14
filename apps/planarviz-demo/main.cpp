@@ -27,10 +27,15 @@ void PlanarvizDemo::init() {
     m_scene.addPolygon("room", "default", "../resources/polygons/example.json");
     m_scene.getObject("room")->getTransform().setTranform(-0.5f, -0.5f, 0.f * 3.14159254f / 180.f);
     m_scene.getObject("room")->setColor(Color(1.f, 0.f, 0.f, 1.f));
+
+    m_scene.addPolygonFill("roomFill", "default", "../resources/polygons/example.json");
+    m_scene.getObject("roomFill")->getTransform().setTranform(-0.5f, -0.5f, 0.f * 3.14159254f / 180.f);
+    m_scene.getObject("roomFill")->getTransform().setDepth(0.3f);
+    m_scene.getObject("roomFill")->setColor(Color(.8f, .8f, .8f, .4f));
     
     m_scene.addTexturedSquare("demoBuffer", "default", "demoBuffer", 2.f, 2.f);
     m_scene.getObject("demoBuffer")->getTransform().setPosition(-1.f, -1.f);
-    m_scene.getObject("demoBuffer")->getTransform().setDepth(.5f);
+    m_scene.getObject("demoBuffer")->getTransform().setDepth(.2f);
 
     m_scene.addHoverableCircle("exampleCircle", "default", 0.03f);
     m_scene.getObject("exampleCircle")->getTransform().setDepth(-.1f);
@@ -71,5 +76,5 @@ void PlanarvizDemo::update(float deltaTime) {
         float prob = coeff * expf(-0.5f * dist / (sigma * sigma));
         probs[row * 128 + col] = prob;
     }
-    m_scene.getTexture("demoBuffer")->colorizeBuffer(probs, Color(0.f, 0.f, 0.f, 1.f), Color(1.f, 1.f, 1.f, 1.f));
+    m_scene.getTexture("demoBuffer")->colorizeBuffer(probs, Color(0.f, 0.f, 0.f, 1.f), Color(1.f, 1.f, 1.f, 0.f));
 }

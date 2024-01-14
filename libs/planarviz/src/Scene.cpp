@@ -72,6 +72,14 @@ IGeometryPtr Scene::addPolygon(std::string name, std::string shaderName, std::st
     return addPolygon(name, shaderName, vertices, boundaryThickness);
 }
 
+IGeometryPtr Scene::addPolygonFill(std::string name, std::string shaderName, std::vector<Point> vertices) {
+    return addGeometry(name, shaderName, std::static_pointer_cast<IGeometry>(std::make_shared<PolygonFill>(vertices)));
+}
+IGeometryPtr Scene::addPolygonFill(std::string name, std::string shaderName, std::string filename) {
+    std::vector<Point> vertices = loadPolygonFromJSON(filename);
+    return addPolygonFill(name, shaderName, vertices);
+}
+
 IGeometryPtr Scene::addCircle(std::string name, std::string shaderName, float radius, int resolution) {
     return addGeometry(name, shaderName, std::static_pointer_cast<IGeometry>(std::make_shared<Circle>(radius, resolution)));
 }

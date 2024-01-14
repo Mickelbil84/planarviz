@@ -42,6 +42,8 @@ namespace planarviz {
         IGeometryPtr addArrow(std::string name, std::string shaderName, float length=DEFAULT_ARROW_LENGTH, float headLength=DEFAULT_ARROW_HEAD_LENGTH, float headWidth=DEFAULT_ARROW_HEAD_WIDTH);
         IGeometryPtr addPolygon(std::string name, std::string shaderName, std::vector<Point> vertices, float boundaryThickness = DEFAULT_POLYGON_BOUNDARY_THICKNESS);
         IGeometryPtr addPolygon(std::string name, std::string shaderName, std::string filename, float boundaryThickness = DEFAULT_POLYGON_BOUNDARY_THICKNESS);
+        IGeometryPtr addPolygonFill(std::string name, std::string shaderName, std::vector<Point> vertices);
+        IGeometryPtr addPolygonFill(std::string name, std::string shaderName, std::string filename);
         IGeometryPtr addCircle(std::string name, std::string shaderName, float radius, int resolution = DEFAULT_CIRCLE_RESOLUTION);
         IGeometryPtr addSquare(std::string name, std::string shaderName, float width, float height, bool centered = false);
         IGeometryPtr addHoverableCircle(std::string name, std::string shaderName, float radius, int resolution = DEFAULT_CIRCLE_RESOLUTION, Color hoverColor = DEFAULT_HOVER_COLOR);
