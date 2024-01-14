@@ -13,7 +13,7 @@ namespace planarviz {
         inline void setPosition(float x, float y) { this->x = x; this->y = y; }
         
         inline float getZoom() const { return zoom; }
-        inline void addZoom(float dzoom) { zoom += dzoom; if (this->zoom < 0.1f) this->zoom = 0.1f; }
+        inline void addZoom(float dzoom) { zoom += dzoom; if (this->zoom < 0.01f) this->zoom = 0.01f; }
         inline void setZoom(float zoom) { this->zoom = zoom; }
 
         inline float getAspectRatio() const { return aspectRatio; }
