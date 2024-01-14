@@ -70,6 +70,7 @@ Polygon::Polygon(std::vector<Point> vertices, float boundaryThickness) :
     TriangleSoup(std::vector<Point>()) {
     // Generate the local thickness geometry (of triangles)
     for (int idx = 0; idx < vertices.size(); idx++) {
+        m_originalVertices.push_back(vertices[idx]);
         Point a = vertices[idx];
         Point b = vertices[(idx + 1) % vertices.size()];
         float len = sqrtf((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));

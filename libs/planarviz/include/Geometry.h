@@ -68,6 +68,8 @@ namespace planarviz {
         TriangleSoup(std::vector<Point> vertices);
         virtual ~TriangleSoup();
         virtual void render();
+
+        inline virtual std::vector<Point> getVertices() const { return m_vertices; }
         
     protected: 
         std::vector<Point> m_vertices;
@@ -89,6 +91,11 @@ namespace planarviz {
     class Polygon : public TriangleSoup {
     public:
         Polygon(std::vector<Point> vertices, float boundaryThickness);
+
+        inline virtual std::vector<Point> getVertices() const { return m_originalVertices; }
+    
+    protected:
+        std::vector<Point> m_originalVertices;
     };
 
     class PolygonFill : public TriangleSoup {
